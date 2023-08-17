@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'accents.dart';
 import 'dice.dart';
+import 'page_manager.dart';
 import 'roller.dart';
 import 'settings.dart';
 import 'preference_manager.dart';
@@ -23,8 +24,8 @@ Color invertColor({required Color color, alpha = 255}) {
 void routeToMainPage(BuildContext context, page, bool isLeft) {
   Navigator.of(context).push(PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionDuration: const Duration(seconds: 1),
-    reverseTransitionDuration: const Duration(seconds: 1),
+    transitionDuration: const Duration(milliseconds: 650),
+    reverseTransitionDuration: const Duration(milliseconds: 650),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       Offset begin = Offset(isLeft ? -1 : 1, 0.0);
       Offset end = Offset.zero;
@@ -43,32 +44,30 @@ void routeToPage(BuildContext context, page) {
  Navigator.of(context).push(MaterialPageRoute<void>(builder: (context) => page));
 }
 
-AppBar appBar(String title) => AppBar(title: Text(title));
-
 BottomNavigationBar bottomBar(BuildContext context) => BottomNavigationBar(
       onTap: (value) {
-        if (Settings.pageIndex == 0) {
+        if (PageManager.pageIndex == 0) {
           Settings.saveSettings();
         }
 
-        final int oldPageIndex = Settings.pageIndex;
-        Settings.pageIndex = value;
+        final int oldPageIndex = PageManager.pageIndex;
+        PageManager.pageIndex = value;
 
-        if (oldPageIndex == Settings.pageIndex) return;
+        if (oldPageIndex == PageManager.pageIndex) return;
 
-        Settings.pushPageIndex(oldPageIndex);
+        PageManager.pushPageIndex(oldPageIndex);
 
-        switch (Settings.pageIndex) {
+        switch (PageManager.pageIndex) {
           case 0: // Settings
-            routeToMainPage(context, const SettingsPage(), oldPageIndex > Settings.pageIndex);
+            routeToMainPage(context, const SettingsPage(), oldPageIndex > PageManager.pageIndex);
           case 1: // Roll page
-            routeToMainPage(context, const RollerPage(), oldPageIndex > Settings.pageIndex);
+            routeToMainPage(context, const RollerPage(), oldPageIndex > PageManager.pageIndex);
           case 2: // Dice Themes
-            routeToMainPage(context, const SetupPage(), oldPageIndex > Settings.pageIndex);
+            routeToMainPage(context, const SetupPage(), oldPageIndex > PageManager.pageIndex);
         }
 
       },
-      currentIndex: Settings.pageIndex,
+      currentIndex: PageManager.pageIndex,
       items: [
         BottomNavigationBarItem(
             icon: const Icon(Icons.settings),
@@ -81,7 +80,7 @@ BottomNavigationBar bottomBar(BuildContext context) => BottomNavigationBar(
         BottomNavigationBarItem(
             icon: const Icon(Icons.square_outlined),
             activeIcon: const Icon(Icons.square_rounded),
-            label: StringConsts.diceTheme.title)
+            label: StringConsts.setup.title)
       ],
     );
 
@@ -98,9 +97,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
 
     PreferenceManager.getInstance();
 

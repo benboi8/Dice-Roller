@@ -1,4 +1,9 @@
+import 'package:dice_roller/main.dart';
 import 'package:flutter/material.dart';
+
+import 'page_manager.dart';
+import 'settings.dart';
+import 'string_consts.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -10,6 +15,33 @@ class SetupPage extends StatefulWidget {
 class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    PageManager.pageIndex = PageManager.setupPage;
+    return WillPopScope(
+      onWillPop: () async {
+        PageManager.popPageIndex();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(StringConsts.setup.title),
+          automaticallyImplyLeading: false,
+        ),
+        bottomNavigationBar: bottomBar(context),
+        body: Column(
+          children: [
+            const SizedBox(height: 20),
+            Slider(
+              onChanged: (value) => setState(() {Settings.sides = value.round();}),
+              value: Settings.sides.roundToDouble(),
+              min: Settings.minSides,
+              max: Settings.maxSides,
+              divisions: (Settings.maxSides - Settings.minSides).round(),
+            ),
+            const Spacer(),
+            Center(child: Text(Settings.sides.toString(), style: const TextStyle(fontSize: 20))),
+          ],
+        ),
+      ),
+    );
   }
 }

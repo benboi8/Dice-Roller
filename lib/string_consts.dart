@@ -2,7 +2,8 @@ class StringConsts {
   static RollerStrings roller = RollerStrings();
   static SettingsStrings settings = SettingsStrings();
   static AccentStrings accents = AccentStrings();
-  static SetupStrings diceTheme = SetupStrings();
+  static SetupStrings setup = SetupStrings();
+  static HistoryStrings history = HistoryStrings();
 }
 
 class RollerStrings {
@@ -13,8 +14,8 @@ class RollerStrings {
 class SettingsStrings {
   String get title => "Settings";
   String get darkMode => "Dark Mode";
-  String get flipScreen => "Flip screen after a dice roll";
-  String get flipScreenDesc => "Useful for playing with someone else";
+  String get addSecondButton => "Adds a second roll button.";
+  String get addSecondButtonDesc => "Adds an inverted Button at the top of the screen for a second player.";
 }
 
 class AccentStrings {
@@ -23,4 +24,8 @@ class AccentStrings {
 
 class SetupStrings {
   String get title => "Dice Setup";
+}
+
+class HistoryStrings {
+  String get title => "Dice History";
 }

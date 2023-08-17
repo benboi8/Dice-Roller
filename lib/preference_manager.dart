@@ -6,10 +6,15 @@ class PreferenceManager {
 
   static String darkMode = "darkMode";
   static String selectedAccent = "selectedAccent";
-  static String flipScreen = "flipScreen";
+  static String addSecondButton = "addSecondButton";
 
   static void getInstance() async {
-    prefs ??= await SharedPreferences.getInstance().then((value) {Settings.getSettings(); return null;});
+    prefs ??= await SharedPreferences.getInstance().then((value) {
+      Future.delayed(const Duration(milliseconds: 5), () {
+        Settings.getSettings();
+      });
+      return value;
+    });
   }
 
   static void writeString(String key, String msg) {
@@ -17,23 +22,24 @@ class PreferenceManager {
   }
 
   static String? getString(String key) {
-    return prefs?.getString(key);
+    var value = prefs?.getString(key);
+    print("$key $value");
+    return value;
   }
 
   static int? getInt(String key) {
-    return prefs?.getInt(key);
-  }
-
-  static void removeString(String key) {
-    prefs?.remove(key);
+    var value = prefs?.getInt(key);
+    print("$key $value");
+    return value;
   }
 
   static bool? getBool(String key) {
-    return prefs?.getBool(key);
+    var value = prefs?.getBool(key);
+    print("$key $value");
+    return value;
   }
 
   static void setBool(String key, bool value) {
-    print("$key $value");
     prefs?.setBool(key, value);
   }
 

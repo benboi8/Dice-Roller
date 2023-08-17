@@ -8,12 +8,18 @@ class Dice {
   static final List<Dice> _dices = [];
 
   late int number;
+  late DateTime _timeRolled;
   int sides = 6;
+
+  String get time => "${_timeRolled.hour % 12}:${_timeRolled.minute} ${_timeRolled.hour <= 12 ? 'AM' : 'PM'}";
 
   Dice(this.sides) {
     number = Random(DateTime.now().millisecondsSinceEpoch).nextInt(sides) + 1;
+    _timeRolled = DateTime.now();
     _dices.add(this);
   }
+
+  static Dice getHistory(int index) => _dices[length - index - 1];
 
   static Dice getIndex(int index) {
     return _dices.elementAt(length - 1 - index);
@@ -25,12 +31,16 @@ class Dice {
 
   static int get length => _dices.length;
 
-  static Widget getFace(Dice dice) {
-    DiceFacePaint paint = DiceFacePaint(dice);
+  Widget getFace() {
+    DiceFacePaint paint = DiceFacePaint(this);
     if (paint.canPaint()) {
-      return CustomPaint(
-          size: Size(DiceStyler.width, DiceStyler.height),
-          painter: paint
+      return SizedBox(
+        width: DiceStyler.width,
+        height: DiceStyler.height,
+        child: CustomPaint(
+            size: Size(DiceStyler.width, DiceStyler.height),
+            painter: paint
+        ),
       );
     } else {
       return SizedBox(

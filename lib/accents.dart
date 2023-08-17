@@ -1,3 +1,4 @@
+import 'package:dice_roller/page_manager.dart';
 import 'package:dice_roller/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -25,12 +26,11 @@ class _AccentsPageState extends State<AccentsPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Settings.popPageIndex();
+        PageManager.popPageIndex();
         return true;
       },
       child: Scaffold(
-        appBar: appBar(StringConsts.diceTheme.title),
-        bottomNavigationBar: bottomBar(context),
+        appBar: AppBar(title: Text(StringConsts.accents.title)),
         body: ListView.builder(
               itemCount: Settings.accents.length * 2,
               itemBuilder: (context, index) {
