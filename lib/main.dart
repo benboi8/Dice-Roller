@@ -1,13 +1,9 @@
 import 'dart:async';
 
-import 'package:dice_roller/setup.dart';
-import 'package:dice_roller/string_consts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'accents.dart';
 import 'dice.dart';
-import 'page_manager.dart';
 import 'roller.dart';
 import 'settings.dart';
 import 'preference_manager.dart';
@@ -20,69 +16,6 @@ Color invertColor({required Color color, alpha = 255}) {
   return Color.fromARGB(
       alpha, 255 - color.red, 255 - color.green, 255 - color.blue);
 }
-
-void routeToMainPage(BuildContext context, page, bool isLeft) {
-  Navigator.of(context).push(PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionDuration: const Duration(milliseconds: 650),
-    reverseTransitionDuration: const Duration(milliseconds: 650),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      Offset begin = Offset(isLeft ? -1 : 1, 0.0);
-      Offset end = Offset.zero;
-      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: Curves.easeOutExpo));
-      final offsetAnimation = animation.drive(tween);
-
-      return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-      );
-    },
-  ));
-}
-
-void routeToPage(BuildContext context, page) {
- Navigator.of(context).push(MaterialPageRoute<void>(builder: (context) => page));
-}
-
-BottomNavigationBar bottomBar(BuildContext context) => BottomNavigationBar(
-      onTap: (value) {
-        if (PageManager.pageIndex == 0) {
-          Settings.saveSettings();
-        }
-
-        final int oldPageIndex = PageManager.pageIndex;
-        PageManager.pageIndex = value;
-
-        if (oldPageIndex == PageManager.pageIndex) return;
-
-        PageManager.pushPageIndex(oldPageIndex);
-
-        switch (PageManager.pageIndex) {
-          case 0: // Settings
-            routeToMainPage(context, const SettingsPage(), oldPageIndex > PageManager.pageIndex);
-          case 1: // Roll page
-            routeToMainPage(context, const RollerPage(), oldPageIndex > PageManager.pageIndex);
-          case 2: // Dice Themes
-            routeToMainPage(context, const SetupPage(), oldPageIndex > PageManager.pageIndex);
-        }
-
-      },
-      currentIndex: PageManager.pageIndex,
-      items: [
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
-            activeIcon: const Icon(Icons.settings_applications),
-            label: StringConsts.settings.title),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.add_box_outlined),
-            activeIcon: const Icon(Icons.add_box),
-            label: StringConsts.roller.title),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.square_outlined),
-            activeIcon: const Icon(Icons.square_rounded),
-            label: StringConsts.setup.title)
-      ],
-    );
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -110,9 +43,9 @@ class _HomePageState extends State<HomePage> {
           });
         }
         if (Settings.brightness != currentBrightness) {
-            setState(() {
-              currentBrightness = Settings.brightness;
-            });
+          setState(() {
+            currentBrightness = Settings.brightness;
+          });
         }
       }
     });
@@ -143,11 +76,6 @@ class _HomePageState extends State<HomePage> {
                     foregroundColor: accentColor.secondary,
                     shape: const BeveledRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20)))),
-                bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                  backgroundColor: accentColor.main,
-                  selectedItemColor: accentColor.secondary,
-                  unselectedItemColor: Colors.white30,
-                ),
                 floatingActionButtonTheme: FloatingActionButtonThemeData(
                     backgroundColor: accentColor.tertiary,
                     foregroundColor: accentColor.secondary),
@@ -156,7 +84,29 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: MaterialStateColor.resolveWith(
                             (states) => accentColor.main),
                         foregroundColor: MaterialStateColor.resolveWith(
-                            (states) => accentColor.secondary)))),
+                            (states) => accentColor.secondary))),
+                sliderTheme: SliderThemeData(
+                  activeTrackColor: accentColor.tertiary,
+                  activeTickMarkColor: accentColor.secondary,
+                  thumbColor: accentColor.main
+                ),
+                switchTheme: SwitchThemeData(
+                  trackColor: MaterialStateColor.resolveWith((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return accentColor.tertiary;
+                    } else {
+                      return accentColor.secondary;
+                    }
+                  }),
+                  thumbColor: MaterialStateColor.resolveWith((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return accentColor.main;
+                    } else {
+                      return accentColor.tertiary;
+                    }
+                  }),
+                )
+        ),
         home: const RollerPage());
   }
 }

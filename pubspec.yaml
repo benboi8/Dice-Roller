@@ -13,7 +13,6 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.2.0
-  audioplayers: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +24,14 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/sounds/
+    - assets/sounds/dice_roll_0.mp3
+    - assets/sounds/dice_roll_1.mp3
+    - assets/sounds/dice_roll_2.mp3
+    - assets/sounds/dice_roll_3.mp3
 
 flutter_icons:
   android: "launcher_icon"

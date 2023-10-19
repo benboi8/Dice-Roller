@@ -1,11 +1,9 @@
+import 'dart:async';
 import 'dart:math';
 
-import 'package:dice_roller/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'dice.dart';
-import 'dice_style.dart';
 import 'history.dart';
 import 'page_manager.dart';
 import 'settings.dart';
@@ -19,6 +17,25 @@ class RollerPage extends StatefulWidget {
 }
 
 class _RollerPageState extends State<RollerPage> {
+  late Timer timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void rollDice() async {
+    setState(() {
+      Dice(Settings.sides);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     PageManager.pageIndex = PageManager.rollerPage;
@@ -29,72 +46,96 @@ class _RollerPageState extends State<RollerPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-            title: Text(StringConsts.roller.title),
-            automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    routeToPage(context, const HistoryPage());
-                  },
-                  icon: const Icon(Icons.history)
-              )
-            ],
+          title: Text(StringConsts.roller.title),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  PageManager.routeToPage(context, const HistoryPage());
+                },
+                icon: const Icon(Icons.history)),
+            IconButton(
+                onPressed: () {
+                  PageManager.routeToPage(context, const SettingsPage());
+                },
+                icon: const Icon(Icons.settings))
+          ],
         ),
-        bottomNavigationBar: bottomBar(context),
         body: Column(
-            children: [
-              const Spacer(),
-              Settings.addSecondButton ? Transform.rotate(
-                angle: pi,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Expanded(child: SizedBox()),
-                    Expanded(
-                      flex: 4,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            Dice(Settings.sides);
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Text(StringConsts.roller.rollDice(Settings.sides)),
+          children: [
+            const Spacer(),
+            Settings.addSecondButton
+                ? Transform.rotate(
+                    angle: pi,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Expanded(child: SizedBox()),
+                        Expanded(
+                          flex: 4,
+                          child: ElevatedButton(
+                            onPressed: () => rollDice(),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                  StringConsts.roller.rollDice(Settings.sides)),
+                            ),
+                          ),
                         ),
-                      ),
+                        const Expanded(child: SizedBox()),
+                      ],
                     ),
-                    const Expanded(child: SizedBox()),
-                  ],
-                ),
-              ) : Container(),
-              Settings.addSecondButton ? const Spacer(flex: 2) : Container(),
-              Center(child: Dice.getLatest().getFace()),
-              const Spacer(flex: 4),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Expanded(child: SizedBox()),
-                  Expanded(
-                    flex: 4,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          Dice(Settings.sides);
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Text(StringConsts.roller.rollDice(Settings.sides)),
-                      ),
+                  )
+                : Container(),
+            Settings.addSecondButton ? const Spacer(flex: 2) : Container(),
+            Settings.addSecondButton
+                ? Transform.rotate(
+                    angle: pi,
+                    child: Text(
+                        StringConsts.roller.youRolled(Dice.getLatest().number),
+                        style: const TextStyle(fontSize: 20)))
+                : Container(),
+            Settings.addSecondButton ? const Spacer(flex: 2) : Container(),
+            Center(child: Dice.getLatest().getFace()),
+            const Spacer(flex: 2),
+            Text(StringConsts.roller.youRolled(Dice.getLatest().number),
+                style: const TextStyle(fontSize: 20)),
+            const Spacer(flex: 2),
+            Slider(
+              value: Settings.sides.toDouble(),
+              onChanged: (value) {
+                setState(() {
+                  Settings.sides = value.round();
+                });
+              },
+              divisions: (Settings.maxSides - Settings.minSides).round(),
+              max: Settings.maxSides,
+              min: Settings.minSides,
+              label: Settings.sides.toString(),
+            ),
+            const Spacer(flex: 4),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Expanded(child: SizedBox()),
+                Expanded(
+                  flex: 4,
+                  child: ElevatedButton(
+                    onPressed: () => rollDice(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Text(StringConsts.roller.rollDice(Settings.sides)),
                     ),
                   ),
-                  const Expanded(child: SizedBox()),
-                ],
-              ),
-              Settings.addSecondButton ? const Spacer() : const SizedBox(height: 20),
-            ],
-          ),
+                ),
+                const Expanded(child: SizedBox()),
+              ],
+            ),
+            Settings.addSecondButton
+                ? const Spacer()
+                : const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }

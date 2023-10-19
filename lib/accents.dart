@@ -37,7 +37,7 @@ class _AccentsPageState extends State<AccentsPage> {
                 if (index % 2 == 1) {
                   AccentColor theme = Settings.accents[((index - 1) / 2).round()];
                   return Card(
-                    color: invertColor(color: theme.main),
+                    // color: invertColor(color: theme.main),
                     child: Padding(
                       padding: const EdgeInsets.all(3),
                       child: ListTile(

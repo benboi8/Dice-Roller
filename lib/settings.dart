@@ -1,9 +1,9 @@
+import 'package:dice_roller/dice_style.dart';
 import 'package:dice_roller/page_manager.dart';
 import 'package:dice_roller/preference_manager.dart';
 import 'package:flutter/material.dart';
 
 import 'accents.dart';
-import 'main.dart';
 import 'string_consts.dart';
 
 class Settings {
@@ -26,13 +26,14 @@ class Settings {
   static void setTheme(int index) {
     selectedAccent = index;
     accentColor = accents[selectedAccent];
+    saveSettings();
   }
 
   static void getSettings() {
     brightness = PreferenceManager.getBool(PreferenceManager.darkMode) ?? true ? Brightness.dark : Brightness.light;
+    DiceStyler.colorIndex = brightness == Brightness.dark ? 0 : 1;
     setTheme(PreferenceManager.getInt(PreferenceManager.selectedAccent) ?? 0);
     addSecondButton = PreferenceManager.getBool(PreferenceManager.addSecondButton) ?? false;
-
   }
 
   static void saveSettings() {
@@ -53,63 +54,62 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     PageManager.pageIndex = PageManager.settingsPage;
-    return WillPopScope(
-      onWillPop: () async {
-        PageManager.popPageIndex();
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-            title: Text(StringConsts.settings.title),
-            automaticallyImplyLeading: false
-        ),
-        bottomNavigationBar: bottomBar(context),
-        body: ListView(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  routeToPage(context, const AccentsPage());
-                },
-                child: Text(StringConsts.accents.title)),
-            Card(
-              child: ListTile(
-                title: Text(StringConsts.settings.darkMode),
-                trailing: Switch(
-                  onChanged: (bool? value) {
-                    setState(() {
-                      if (value ?? true) {
-                        Settings.brightness = Brightness.dark;
-                      } else {
-                        Settings.brightness = Brightness.light;
-                      }
-
-                      Settings.saveSettings();
-                    });
-                  }, value: Settings.brightness == Brightness.dark,
-                ),
-              )
-            ),
-            Card(
-                child: ListTile(
-              title: Text(StringConsts.settings.addSecondButton),
-              subtitle: Text(StringConsts.settings.addSecondButtonDesc),
+    return Scaffold(
+      appBar: AppBar(title: Text(StringConsts.settings.title)),
+      body: ListView(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                PageManager.routeToPage(context, const AccentsPage());
+              },
+              child: Text(StringConsts.accents.title)),
+          Card(
+            child: ListTile(
+              title: Text(StringConsts.settings.darkMode),
               trailing: Switch(
+                thumbIcon: MaterialStateProperty.resolveWith((states) {
+                  if (Settings.brightness == Brightness.dark) {
+                    return Icon(Icons.dark_mode, color: Settings.accentColor.secondary);
+                  } else {
+                    return Icon(Icons.light_mode, color: Settings.accentColor.secondary);
+                  }
+                }),
                 onChanged: (bool? value) {
                   setState(() {
                     if (value ?? true) {
-                      Settings.addSecondButton = true;
+                      Settings.brightness = Brightness.dark;
+                      DiceStyler.colorIndex = 0;
                     } else {
-                      Settings.addSecondButton = false;
+                      Settings.brightness = Brightness.light;
+                      DiceStyler.colorIndex = 1;
                     }
 
                     Settings.saveSettings();
                   });
-                },
-                value: Settings.addSecondButton,
+                }, value: Settings.brightness == Brightness.dark,
               ),
-            )),
-          ],
-        ),
+            )
+          ),
+          Card(
+              child: ListTile(
+            title: Text(StringConsts.settings.addSecondButton),
+            subtitle: Text(StringConsts.settings.addSecondButtonDesc),
+            trailing: Switch(
+              onChanged: (bool? value) {
+                setState(() {
+                  if (value ?? true) {
+                    Settings.addSecondButton = true;
+                  } else {
+                    Settings.addSecondButton = false;
+                  }
+
+                  Settings.saveSettings();
+                });
+              },
+              value: Settings.addSecondButton,
+            ),
+          )),
+        ],
       ),
     );
   }

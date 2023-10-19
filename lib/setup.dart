@@ -1,4 +1,3 @@
-import 'package:dice_roller/main.dart';
 import 'package:flutter/material.dart';
 
 import 'page_manager.dart';
@@ -26,7 +25,7 @@ class _SetupPageState extends State<SetupPage> {
           title: Text(StringConsts.setup.title),
           automaticallyImplyLeading: false,
         ),
-        bottomNavigationBar: bottomBar(context),
+        // bottomNavigationBar: bottomBar(context),
         body: Column(
           children: [
             const SizedBox(height: 20),
@@ -37,8 +36,23 @@ class _SetupPageState extends State<SetupPage> {
               max: Settings.maxSides,
               divisions: (Settings.maxSides - Settings.minSides).round(),
             ),
-            const Spacer(),
+            const SizedBox(height: 20),
             Center(child: Text(Settings.sides.toString(), style: const TextStyle(fontSize: 20))),
+            Row(
+              children: [
+                const Expanded(child: SizedBox()),
+                Expanded(flex: 3, child: ElevatedButton(
+                  onPressed: () {setState(() {});},
+                  child: Text(StringConsts.setup.addDice(Settings.sides)),
+                )),
+                const Expanded(child: SizedBox()),
+                Expanded(flex: 3, child: ElevatedButton(
+                  onPressed: () {setState(() {});},
+                  child: Text(StringConsts.setup.removeDice),
+                )),
+                const Expanded(child: SizedBox()),
+              ],
+            )
           ],
         ),
       ),

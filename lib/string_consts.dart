@@ -4,17 +4,24 @@ class StringConsts {
   static AccentStrings accents = AccentStrings();
   static SetupStrings setup = SetupStrings();
   static HistoryStrings history = HistoryStrings();
+
+  static String getA(int sides) => sides.toString().startsWith("8") ? 'an' : 'a';
+
+  static String getSides(int sides) {
+    return "${getA(sides)} $sides sided";
+  }
 }
 
 class RollerStrings {
   String get title => "Roll a Dice";
-  String rollDice(int sides) => "Roll ${sides.toString().startsWith("8") ? 'an' : 'a'} $sides sided die";
+  String rollDice(int sides) => "Roll ${StringConsts.getSides(sides)} die";
+  String youRolled(int sides) => "You rolled ${StringConsts.getA(sides)} $sides!";
 }
 
 class SettingsStrings {
   String get title => "Settings";
   String get darkMode => "Dark Mode";
-  String get addSecondButton => "Adds a second roll button.";
+  String get addSecondButton => "Two player mode";
   String get addSecondButtonDesc => "Adds an inverted Button at the top of the screen for a second player.";
 }
 
@@ -24,6 +31,8 @@ class AccentStrings {
 
 class SetupStrings {
   String get title => "Dice Setup";
+  String addDice(int sides) => "Add ${StringConsts.getSides(sides)} dice ";
+  String get removeDice => "Remove the last dice added";
 }
 
 class HistoryStrings {
