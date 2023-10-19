@@ -23,6 +23,7 @@ class SettingsStrings {
   String get darkMode => "Dark Mode";
   String get addSecondButton => "Two player mode";
   String get addSecondButtonDesc => "Adds an inverted Button at the top of the screen for a second player.";
+  String get fastAnimations => "Speeds up the animation of the dice.";
 }
 
 class AccentStrings {

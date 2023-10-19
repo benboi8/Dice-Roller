@@ -7,6 +7,7 @@ class PreferenceManager {
   static String darkMode = "darkMode";
   static String selectedAccent = "selectedAccent";
   static String addSecondButton = "addSecondButton";
+  static String fastAnimations = "fastAnimations";
 
   static void getInstance() async {
     prefs ??= await SharedPreferences.getInstance().then((value) {

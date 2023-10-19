@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'animation_page.dart';
 import 'dice.dart';
 import 'history.dart';
 import 'page_manager.dart';
@@ -30,9 +31,23 @@ class _RollerPageState extends State<RollerPage> {
     });
   }
 
+  bool canRollAgain = true;
+  Widget diceFace = Dice.getLatest().getFace();
+  int diceNumber = Dice.getLatest().number;
+
   void rollDice() async {
     setState(() {
-      Dice(Settings.sides);
+      if (canRollAgain) {
+        Dice(Settings.sides);
+        canRollAgain = false;
+        AnimationState.startAnimation().then((bool value) {
+          setState(() {
+            canRollAgain = true;
+            diceFace = Dice.getLatest().getFace();
+            diceNumber = Dice.getLatest().number;
+          });
+        });
+      }
     });
   }
 
@@ -92,13 +107,15 @@ class _RollerPageState extends State<RollerPage> {
                 ? Transform.rotate(
                     angle: pi,
                     child: Text(
-                        StringConsts.roller.youRolled(Dice.getLatest().number),
+                        StringConsts.roller.youRolled(diceNumber),
                         style: const TextStyle(fontSize: 20)))
                 : Container(),
             Settings.addSecondButton ? const Spacer(flex: 2) : Container(),
-            Center(child: Dice.getLatest().getFace()),
+            Center(
+                child: AnimationState.animate(diceFace)
+            ),
             const Spacer(flex: 2),
-            Text(StringConsts.roller.youRolled(Dice.getLatest().number),
+            Text(StringConsts.roller.youRolled(diceNumber),
                 style: const TextStyle(fontSize: 20)),
             const Spacer(flex: 2),
             Slider(
